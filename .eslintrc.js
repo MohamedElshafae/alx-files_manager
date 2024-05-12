@@ -27,6 +27,7 @@ module.exports = {
       'LabeledStatement',
       'WithStatement',
     ],
+    "jest/require-hook": "off",
   },
   overrides: [
     {
