@@ -48,6 +48,8 @@ const getMe = async (req, res) => {
     res.status(401).json({
       error: 'Unauthorized',
     });
+
+    return;
   }
 
   const email = await redisClient.get(`auth_${token}`);
