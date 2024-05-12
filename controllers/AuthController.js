@@ -39,8 +39,11 @@ const getConnect = async (req, res) => {
 
 const getDisconnect = async (req, res) => {
   const token = req.headers['x-token'];
+  const email = await redisClient.get(`auth_${token}`);
 
-  if (!token) {
+  const user = await dbClient.findUserByEmail(email);
+
+  if (!user) {
     res.status(401).json({
       error: 'Unauthorized',
     });
