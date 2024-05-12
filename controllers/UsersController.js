@@ -52,8 +52,8 @@ const getMe = async (req, res) => {
     return;
   }
 
-  const email = await redisClient.get(`auth_${token}`);
-  const user = await dbClient.findUserByEmail(email);
+  const id = await redisClient.get(`auth_${token}`);
+  const user = await dbClient.findUserById(id);
 
   if (!user) {
     res.status(401).json({
@@ -64,7 +64,7 @@ const getMe = async (req, res) => {
   }
 
   res.json({
-    id: user._id,
+    id,
     email: user.email,
   });
 };

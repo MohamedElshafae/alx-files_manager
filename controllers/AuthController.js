@@ -30,7 +30,7 @@ const getConnect = async (req, res) => {
 
   const token = uuidv4();
 
-  await redisClient.set(`auth_${token}`, email, 24 * 60 * 60);
+  await redisClient.set(`auth_${token}`, user._id.toString(), 24 * 60 * 60);
 
   res.json({
     token,
@@ -39,9 +39,9 @@ const getConnect = async (req, res) => {
 
 const getDisconnect = async (req, res) => {
   const token = req.headers['x-token'];
-  const email = await redisClient.get(`auth_${token}`);
+  const id = await redisClient.get(`auth_${token}`);
 
-  const user = await dbClient.findUserByEmail(email);
+  const user = await dbClient.findUserById(id);
 
   if (!user) {
     res.status(401).json({
