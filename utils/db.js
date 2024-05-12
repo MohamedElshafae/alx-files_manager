@@ -5,29 +5,29 @@ const PORT = process.env.DB_PORT || 27017;
 const DATABASE = process.env.DB_DATABASE || 'files_manager';
 
 class DBClient {
-  constructor () {
+  constructor() {
     this.client = new MongoClient(
-      `mongodb://${HOST}:${PORT}`
+      `mongodb://${HOST}:${PORT}`,
     );
 
     this.client.connect();
   }
 
-  isAlive () {
+  isAlive() {
     return this.client.isConnected();
   }
 
-  async nbUsers () {
+  async nbUsers() {
     const users = this.client.db(
-      DATABASE
+      DATABASE,
     ).collection('users');
 
     return users.countDocuments();
   }
 
-  async nbFiles () {
+  async nbFiles() {
     const files = this.client.db(
-      DATABASE
+      DATABASE,
     ).collection('files');
 
     return files.countDocuments();
