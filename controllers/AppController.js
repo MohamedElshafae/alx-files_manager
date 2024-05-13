@@ -4,7 +4,7 @@ import dbClient from '../utils/db';
 const getStatus = (req, res) => {
   res.json({
     redis: redisClient.isAlive(),
-    db: dbClient.isAlive(),
+    db: dbClient.isAlive()
   });
 };
 
@@ -14,7 +14,7 @@ const getStats = async (req, res) => {
 
   res.json({
     users: nbUsers,
-    files: nbFiles,
+    files: nbFiles
   });
 };
 

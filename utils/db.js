@@ -5,68 +5,109 @@ const PORT = process.env.DB_PORT || 27017;
 const DATABASE = process.env.DB_DATABASE || 'files_manager';
 
 class DBClient {
-  constructor() {
+  constructor () {
     this.client = new MongoClient(
-      `mongodb://${HOST}:${PORT}`,
+      `mongodb://${HOST}:${PORT}`
     );
 
     this.client.connect();
   }
 
-  isAlive() {
+  isAlive () {
     return this.client.isConnected();
   }
 
-  async nbUsers() {
+  async nbUsers () {
     const users = this.client.db(
-      DATABASE,
+      DATABASE
     ).collection('users');
 
     return users.countDocuments();
   }
 
-  async nbFiles() {
+  async nbFiles () {
     const files = this.client.db(
-      DATABASE,
+      DATABASE
     ).collection('files');
 
     return files.countDocuments();
   }
 
-  async findUserByEmail(email) {
+  async findUserByEmail (email) {
     const users = this.client.db(
-      DATABASE,
+      DATABASE
     ).collection('users');
 
     try {
-      const user = await users.findOne({ email })
+      const user = await users.findOne({ email });
 
-      return user
-    } catch(e) { }
+      return user;
+    } catch (e) {
+      return null;
+    }
   }
 
-  async findUserById(id) {
+  async findUserById (id) {
     const users = this.client.db(
-      DATABASE,
+      DATABASE
     ).collection('users');
 
     try {
-      const user = await users.findOne({ _id: new ObjectId(id) })
+      const user = await users.findOne({ _id: new ObjectId(id) });
 
-      return user
-    } catch(e) { }
+      return user;
+    } catch (e) {
+      return null;
+    }
   }
 
-  async createUser(email, password) {
+  async createUser (email, password) {
     const users = this.client.db(
-      DATABASE,
+      DATABASE
     ).collection('users');
 
     try {
-      const result = await users.insertOne({ email, password })
+      const result = await users.insertOne({ email, password });
 
-      return result.insertedId
-    } catch(e) { }
+      return result.insertedId;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async findFileById (id) {
+    const files = this.client.db(
+      DATABASE
+    ).collection('files');
+
+    try {
+      const file = await files.findOne({ _id: new ObjectId(id) });
+
+      return file;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async createFile (userId, name, type, isPublic, parentId, localPath) {
+    const files = this.client.db(
+      DATABASE
+    ).collection('files');
+
+    try {
+      const result = await files.insertOne({
+        userId,
+        name,
+        type,
+        isPublic,
+        parentId,
+        localPath
+      });
+
+      return result.insertedId;
+    } catch (e) {
+      return null;
+    }
   }
 }
 
