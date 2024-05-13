@@ -28,9 +28,6 @@ module.exports = {
       'WithStatement',
     ],
     "jest/require-hook": "off",
-    "comma-dangle": "off",
-    "no-empty": "off",
-    "space-before-function-paren": "off"
   },
   overrides: [
     {

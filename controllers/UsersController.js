@@ -7,7 +7,7 @@ const postNew = async (req, res) => {
 
   if (!email) {
     res.status(400).json({
-      error: 'Missing email'
+      error: 'Missing email',
     });
 
     return;
@@ -15,7 +15,7 @@ const postNew = async (req, res) => {
 
   if (!password) {
     res.status(400).json({
-      error: 'Missing password'
+      error: 'Missing password',
     });
 
     return;
@@ -25,7 +25,7 @@ const postNew = async (req, res) => {
 
   if (user) {
     res.status(400).json({
-      error: 'Already exist'
+      error: 'Already exist',
     });
 
     return;
@@ -37,7 +37,7 @@ const postNew = async (req, res) => {
 
   res.status(201).json({
     id,
-    email
+    email,
   });
 };
 
@@ -46,7 +46,7 @@ const getMe = async (req, res) => {
 
   if (!token) {
     res.status(401).json({
-      error: 'Unauthorized'
+      error: 'Unauthorized',
     });
 
     return;
@@ -57,7 +57,7 @@ const getMe = async (req, res) => {
 
   if (!user) {
     res.status(401).json({
-      error: 'Unauthorized'
+      error: 'Unauthorized',
     });
 
     return;
@@ -65,7 +65,7 @@ const getMe = async (req, res) => {
 
   res.json({
     id,
-    email: user.email
+    email: user.email,
   });
 };
 

@@ -5,37 +5,37 @@ const PORT = process.env.DB_PORT || 27017;
 const DATABASE = process.env.DB_DATABASE || 'files_manager';
 
 class DBClient {
-  constructor () {
+  constructor() {
     this.client = new MongoClient(
-      `mongodb://${HOST}:${PORT}`
+      `mongodb://${HOST}:${PORT}`,
     );
 
     this.client.connect();
   }
 
-  isAlive () {
+  isAlive() {
     return this.client.isConnected();
   }
 
-  async nbUsers () {
+  async nbUsers() {
     const users = this.client.db(
-      DATABASE
+      DATABASE,
     ).collection('users');
 
     return users.countDocuments();
   }
 
-  async nbFiles () {
+  async nbFiles() {
     const files = this.client.db(
-      DATABASE
+      DATABASE,
     ).collection('files');
 
     return files.countDocuments();
   }
 
-  async findUserByEmail (email) {
+  async findUserByEmail(email) {
     const users = this.client.db(
-      DATABASE
+      DATABASE,
     ).collection('users');
 
     try {
@@ -47,9 +47,9 @@ class DBClient {
     }
   }
 
-  async findUserById (id) {
+  async findUserById(id) {
     const users = this.client.db(
-      DATABASE
+      DATABASE,
     ).collection('users');
 
     try {
@@ -61,9 +61,9 @@ class DBClient {
     }
   }
 
-  async createUser (email, password) {
+  async createUser(email, password) {
     const users = this.client.db(
-      DATABASE
+      DATABASE,
     ).collection('users');
 
     try {
@@ -75,9 +75,9 @@ class DBClient {
     }
   }
 
-  async findFileById (id) {
+  async findFileById(id) {
     const files = this.client.db(
-      DATABASE
+      DATABASE,
     ).collection('files');
 
     try {
@@ -89,9 +89,9 @@ class DBClient {
     }
   }
 
-  async createFile (userId, name, type, isPublic, parentId, localPath) {
+  async createFile(userId, name, type, isPublic, parentId, localPath) {
     const files = this.client.db(
-      DATABASE
+      DATABASE,
     ).collection('files');
 
     try {
@@ -101,7 +101,7 @@ class DBClient {
         type,
         isPublic,
         parentId,
-        localPath
+        localPath,
       });
 
       return result.insertedId;

@@ -8,7 +8,7 @@ const getConnect = async (req, res) => {
 
   if (!authHeader) {
     res.status(401).json({
-      error: 'Unauthorized'
+      error: 'Unauthorized',
     });
 
     return;
@@ -22,7 +22,7 @@ const getConnect = async (req, res) => {
 
   if (!user || sha1(password) !== user.password) {
     res.status(401).json({
-      error: 'Unauthorized'
+      error: 'Unauthorized',
     });
 
     return;
@@ -33,7 +33,7 @@ const getConnect = async (req, res) => {
   await redisClient.set(`auth_${token}`, user._id.toString(), 24 * 60 * 60);
 
   res.json({
-    token
+    token,
   });
 };
 
@@ -45,7 +45,7 @@ const getDisconnect = async (req, res) => {
 
   if (!user) {
     res.status(401).json({
-      error: 'Unauthorized'
+      error: 'Unauthorized',
     });
 
     return;

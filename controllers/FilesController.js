@@ -13,7 +13,7 @@ const postUpload = async (req, res) => {
 
   if (!user) {
     res.status(401).json({
-      error: 'Unauthorized'
+      error: 'Unauthorized',
     });
 
     return;
@@ -24,12 +24,12 @@ const postUpload = async (req, res) => {
     type,
     parentId = 0,
     isPublic = false,
-    data
+    data,
   } = req.body;
 
   if (!name) {
     res.status(400).json({
-      error: 'Missing name'
+      error: 'Missing name',
     });
 
     return;
@@ -37,7 +37,7 @@ const postUpload = async (req, res) => {
 
   if (!type) {
     res.status(400).json({
-      error: 'Missing type'
+      error: 'Missing type',
     });
 
     return;
@@ -45,7 +45,7 @@ const postUpload = async (req, res) => {
 
   if (!data && type !== 'folder') {
     res.status(400).json({
-      error: 'Missing data'
+      error: 'Missing data',
     });
 
     return;
@@ -56,7 +56,7 @@ const postUpload = async (req, res) => {
 
     if (!parent) {
       res.status(400).json({
-        error: 'Parent not found'
+        error: 'Parent not found',
       });
 
       return;
@@ -64,7 +64,7 @@ const postUpload = async (req, res) => {
 
     if (parent.type !== 'folder') {
       res.status(400).json({
-        error: 'Parent is not a folder'
+        error: 'Parent is not a folder',
       });
 
       return;
@@ -77,7 +77,7 @@ const postUpload = async (req, res) => {
       name,
       type,
       isPublic,
-      parentId
+      parentId,
     );
 
     res.status(201).json({
@@ -86,7 +86,7 @@ const postUpload = async (req, res) => {
       name,
       type,
       isPublic,
-      parentId
+      parentId,
     });
 
     return;
@@ -107,7 +107,7 @@ const postUpload = async (req, res) => {
     type,
     isPublic,
     parentId,
-    localPath
+    localPath,
   );
 
   res.status(201).json({
@@ -116,7 +116,7 @@ const postUpload = async (req, res) => {
     name,
     type,
     isPublic,
-    parentId
+    parentId,
   });
 };
 
