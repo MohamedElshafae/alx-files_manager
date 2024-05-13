@@ -13,101 +13,66 @@ class DBClient {
     this.client.connect();
   }
 
+  get usersCollection() {
+    return this.client.db(
+      DATABASE,
+    ).collection('users');
+  }
+
+  get filesCollection() {
+    return this.client.db(
+      DATABASE,
+    ).collection('files');
+  }
+
   isAlive() {
     return this.client.isConnected();
   }
 
-  async nbUsers() {
-    const users = this.client.db(
-      DATABASE,
-    ).collection('users');
-
-    return users.countDocuments();
+  nbUsers() {
+    return this.usersCollection.countDocuments();
   }
 
-  async nbFiles() {
-    const files = this.client.db(
-      DATABASE,
-    ).collection('files');
-
-    return files.countDocuments();
+  nbFiles() {
+    return this.filesCollection.countDocuments();
   }
 
-  async findUserByEmail(email) {
-    const users = this.client.db(
-      DATABASE,
-    ).collection('users');
-
-    try {
-      const user = await users.findOne({ email });
-
-      return user;
-    } catch (e) {
-      return null;
-    }
+  findUserByEmail(email) {
+    return this.usersCollection.findOne({ email });
   }
 
-  async findUserById(id) {
-    const users = this.client.db(
-      DATABASE,
-    ).collection('users');
-
-    try {
-      const user = await users.findOne({ _id: new ObjectId(id) });
-
-      return user;
-    } catch (e) {
-      return null;
-    }
+  findUserById(id) {
+    return this.usersCollection.findOne({
+      _id: new ObjectId(id),
+    });
   }
 
   async createUser(email, password) {
-    const users = this.client.db(
-      DATABASE,
-    ).collection('users');
+    const result = await this.usersCollection.insertOne({
+      email,
+      password,
+    });
 
-    try {
-      const result = await users.insertOne({ email, password });
-
-      return result.insertedId;
-    } catch (e) {
-      return null;
-    }
+    return result.insertedId;
   }
 
-  async findFileById(id) {
-    const files = this.client.db(
-      DATABASE,
-    ).collection('files');
-
-    try {
-      const file = await files.findOne({ _id: new ObjectId(id) });
-
-      return file;
-    } catch (e) {
-      return null;
-    }
+  findFileById(id) {
+    return this.filesCollection.findOne({
+      _id: new ObjectId(id),
+    });
   }
 
   async createFile(userId, name, type, isPublic, parentId, localPath) {
-    const files = this.client.db(
-      DATABASE,
-    ).collection('files');
+    const result = await this.filesCollection.insertOne({
+      userId,
+      name,
+      type,
+      isPublic,
+      parentId,
+      localPath,
+    });
 
-    try {
-      const result = await files.insertOne({
-        userId,
-        name,
-        type,
-        isPublic,
-        parentId,
-        localPath,
-      });
-
-      return result.insertedId;
-    } catch (e) {
-      return null;
-    }
+    return result.insertedId;
   }
 }
 

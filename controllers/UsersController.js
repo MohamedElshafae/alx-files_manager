@@ -1,34 +1,23 @@
 import sha1 from 'sha1';
 import dbClient from '../utils/db';
-import redisClient from '../utils/redis';
+import HttpError from '../utils/HttpError';
+import asyncHandler from '../utils/asyncHandler';
 
-const postNew = async (req, res) => {
+const postNew = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   if (!email) {
-    res.status(400).json({
-      error: 'Missing email',
-    });
-
-    return;
+    throw new HttpError(400, 'Missing email');
   }
 
   if (!password) {
-    res.status(400).json({
-      error: 'Missing password',
-    });
-
-    return;
+    throw new HttpError(400, 'Missing password');
   }
 
   const user = await dbClient.findUserByEmail(email);
 
   if (user) {
-    res.status(400).json({
-      error: 'Already exist',
-    });
-
-    return;
+    throw new HttpError(400, 'Already exist');
   }
 
   const passwordHash = sha1(password);
@@ -39,34 +28,15 @@ const postNew = async (req, res) => {
     id,
     email,
   });
-};
+});
 
-const getMe = async (req, res) => {
-  const token = req.headers['x-token'];
-
-  if (!token) {
-    res.status(401).json({
-      error: 'Unauthorized',
-    });
-
-    return;
-  }
-
-  const id = await redisClient.get(`auth_${token}`);
-  const user = await dbClient.findUserById(id);
-
-  if (!user) {
-    res.status(401).json({
-      error: 'Unauthorized',
-    });
-
-    return;
-  }
+const getMe = asyncHandler(async (req, res) => {
+  const { user } = req;
 
   res.json({
-    id,
+    id: user._id,
     email: user.email,
   });
-};
+});
 
 export default { postNew, getMe };

@@ -1,5 +1,6 @@
 import redisClient from '../utils/redis';
 import dbClient from '../utils/db';
+import asyncHandler from '../utils/asyncHandler';
 
 const getStatus = (req, res) => {
   res.json({
@@ -8,7 +9,7 @@ const getStatus = (req, res) => {
   });
 };
 
-const getStats = async (req, res) => {
+const getStats = asyncHandler(async (req, res) => {
   const nbUsers = await dbClient.nbUsers();
   const nbFiles = await dbClient.nbFiles();
 
@@ -16,6 +17,6 @@ const getStats = async (req, res) => {
     users: nbUsers,
     files: nbFiles,
   });
-};
+});
 
 export default { getStatus, getStats };

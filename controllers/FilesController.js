@@ -1,23 +1,13 @@
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
 import dbClient from '../utils/db';
-import redisClient from '../utils/redis';
+import HttpError from '../utils/HttpError';
+import asyncHandler from '../utils/asyncHandler';
 
 const FOLDER_PATH = process.env.FOLDER_PATH || '/tmp/files_manager';
 
-const postUpload = async (req, res) => {
-  const token = req.headers['x-token'];
-
-  const userId = await redisClient.get(`auth_${token}`);
-  const user = await dbClient.findUserById(userId);
-
-  if (!user) {
-    res.status(401).json({
-      error: 'Unauthorized',
-    });
-
-    return;
-  }
+const postUpload = asyncHandler(async (req, res) => {
+  const { user } = req;
 
   const {
     name,
@@ -28,52 +18,32 @@ const postUpload = async (req, res) => {
   } = req.body;
 
   if (!name) {
-    res.status(400).json({
-      error: 'Missing name',
-    });
-
-    return;
+    throw new HttpError(400, 'Missing name');
   }
 
   if (!type) {
-    res.status(400).json({
-      error: 'Missing type',
-    });
-
-    return;
+    throw new HttpError(400, 'Missing type');
   }
 
   if (!data && type !== 'folder') {
-    res.status(400).json({
-      error: 'Missing data',
-    });
-
-    return;
+    throw new HttpError(400, 'Missing data');
   }
 
   if (parentId) {
     const parent = await dbClient.findFileById(parentId);
 
     if (!parent) {
-      res.status(400).json({
-        error: 'Parent not found',
-      });
-
-      return;
+      throw new HttpError(400, 'Parent not found');
     }
 
     if (parent.type !== 'folder') {
-      res.status(400).json({
-        error: 'Parent is not a folder',
-      });
-
-      return;
+      throw new HttpError(400, 'Parent is not a folder');
     }
   }
 
   if (type === 'folder') {
     const folderId = await dbClient.createFile(
-      userId,
+      user._id,
       name,
       type,
       isPublic,
@@ -82,7 +52,7 @@ const postUpload = async (req, res) => {
 
     res.status(201).json({
       id: folderId,
-      userId,
+      userId: user._id,
       name,
       type,
       isPublic,
@@ -102,7 +72,7 @@ const postUpload = async (req, res) => {
   fs.writeFileSync(localPath, decodedData);
 
   const fileId = await dbClient.createFile(
-    userId,
+    user._id,
     name,
     type,
     isPublic,
@@ -112,12 +82,12 @@ const postUpload = async (req, res) => {
 
   res.status(201).json({
     id: fileId,
-    userId,
+    userId: user._id,
     name,
     type,
     isPublic,
     parentId,
   });
-};
+});
 
 export default { postUpload };
