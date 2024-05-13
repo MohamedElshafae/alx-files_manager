@@ -11,7 +11,11 @@ router.get('/status', AppController.getStatus);
 router.get('/stats', AppController.getStats);
 
 router.get('/connect', AuthController.getConnect);
-router.get('/disconnect', AuthController.getDisconnect);
+router.get(
+  '/disconnect',
+  authenticateUser,
+  AuthController.getDisconnect,
+);
 
 router.post('/users', UsersController.postNew);
 router.get(
