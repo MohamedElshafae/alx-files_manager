@@ -90,4 +90,45 @@ const postUpload = asyncHandler(async (req, res) => {
   });
 });
 
-export default { postUpload };
+const getShow = asyncHandler(async (req, res) => {
+  const { user } = req;
+  const { id } = req.params;
+
+  const file = await dbClient.findUserFileById(
+    user._id.toString(),
+    id,
+  );
+
+  res.json({
+    id: file._id,
+    userId: file.userId,
+    name: file.name,
+    type: file.type,
+    isPublic: file.isPublic,
+    parentId: file.parentId,
+  });
+});
+
+const getIndex = asyncHandler(async (req, res) => {
+  const { user } = req;
+  const { parentId, page } = req.query;
+
+  const files = await dbClient.findUserFilesByParentId(
+    user._id.toString(),
+    parentId,
+    page,
+  );
+
+  res.json(
+    files.map((file) => ({
+      id: file._id,
+      userId: file.userId,
+      name: file.name,
+      type: file.type,
+      isPublic: file.isPublic,
+      parentId: file.parentId,
+    })),
+  );
+});
+
+export default { postUpload, getShow, getIndex };

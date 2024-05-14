@@ -29,5 +29,15 @@ router.post(
   authenticateUser,
   FilesController.postUpload,
 );
+router.get(
+  '/files/:id',
+  authenticateUser,
+  FilesController.getShow,
+);
+router.get(
+  '/files',
+  authenticateUser,
+  FilesController.getIndex,
+);
 
 export default router;

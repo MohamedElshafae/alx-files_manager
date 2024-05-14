@@ -74,6 +74,23 @@ class DBClient {
 
     return result.insertedId;
   }
+
+  findUserFilesByParentId(userId, parentId = 0, page = 0) {
+    const pageSize = 20;
+    const skip = page * pageSize;
+
+    return this.filesCollection.find({
+      userId,
+      parentId,
+    }).skip(skip).limit(pageSize).toArray();
+  }
+
+  findUserFileById(userId, fileId) {
+    return this.filesCollection.findOne({
+      userId: new ObjectId(userId),
+      _id: new ObjectId(fileId),
+    });
+  }
 }
 
 const dbClient = new DBClient();
