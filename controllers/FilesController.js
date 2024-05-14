@@ -12,8 +12,8 @@ const postUpload = asyncHandler(async (req, res) => {
   const {
     name,
     type,
-    parentId = 0,
-    isPublic = false,
+    parentId,
+    isPublic,
     data,
   } = req.body;
 
@@ -42,22 +42,15 @@ const postUpload = asyncHandler(async (req, res) => {
   }
 
   if (type === 'folder') {
-    const folderId = await dbClient.createFile(
-      user._id,
+    const folder = await dbClient.createFile(
+      user.id,
       name,
       type,
       isPublic,
       parentId,
     );
 
-    res.status(201).json({
-      id: folderId,
-      userId: user._id,
-      name,
-      type,
-      isPublic,
-      parentId,
-    });
+    res.status(201).json(folder);
 
     return;
   }
@@ -71,8 +64,8 @@ const postUpload = asyncHandler(async (req, res) => {
 
   fs.writeFileSync(localPath, decodedData);
 
-  const fileId = await dbClient.createFile(
-    user._id,
+  const file = await dbClient.createFile(
+    user.id,
     name,
     type,
     isPublic,
@@ -80,14 +73,7 @@ const postUpload = asyncHandler(async (req, res) => {
     localPath,
   );
 
-  res.status(201).json({
-    id: fileId,
-    userId: user._id,
-    name,
-    type,
-    isPublic,
-    parentId,
-  });
+  res.status(201).json({ ...file, localPath: undefined });
 });
 
 const getShow = asyncHandler(async (req, res) => {
@@ -95,18 +81,11 @@ const getShow = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   const file = await dbClient.findUserFileById(
-    user._id.toString(),
+    user.id,
     id,
   );
 
-  res.json({
-    id: file._id,
-    userId: file.userId,
-    name: file.name,
-    type: file.type,
-    isPublic: file.isPublic,
-    parentId: file.parentId,
-  });
+  res.json({ ...file, localPath: undefined });
 });
 
 const getIndex = asyncHandler(async (req, res) => {
@@ -114,21 +93,14 @@ const getIndex = asyncHandler(async (req, res) => {
   const { parentId, page } = req.query;
 
   const files = await dbClient.findUserFilesByParentId(
-    user._id.toString(),
+    user.id,
     parentId,
     page,
   );
 
-  res.json(
-    files.map((file) => ({
-      id: file._id,
-      userId: file.userId,
-      name: file.name,
-      type: file.type,
-      isPublic: file.isPublic,
-      parentId: file.parentId,
-    })),
-  );
+  res.json(files.map((file) => (
+    { ...file, localPath: undefined }
+  )));
 });
 
 export default { postUpload, getShow, getIndex };

@@ -37,14 +37,38 @@ class DBClient {
     return this.filesCollection.countDocuments();
   }
 
-  findUserByEmail(email) {
-    return this.usersCollection.findOne({ email });
+  async findUserByEmail(email) {
+    const user = await this.usersCollection.findOne({ email });
+
+    if (!user) {
+      return null;
+    }
+
+    const { _id, password } = user;
+
+    return {
+      id: _id.toString(),
+      email,
+      password,
+    };
   }
 
-  findUserById(id) {
-    return this.usersCollection.findOne({
+  async findUserById(id) {
+    const user = await this.usersCollection.findOne({
       _id: new ObjectId(id),
     });
+
+    if (!user) {
+      return null;
+    }
+
+    const { email, password } = user;
+
+    return {
+      id,
+      email,
+      password,
+    };
   }
 
   async createUser(email, password) {
@@ -53,43 +77,126 @@ class DBClient {
       password,
     });
 
-    return result.insertedId;
+    return {
+      id: result.insertedId.toString(),
+      email,
+    };
   }
 
-  findFileById(id) {
-    return this.filesCollection.findOne({
+  async findFileById(id) {
+    const file = await this.filesCollection.findOne({
       _id: new ObjectId(id),
     });
-  }
 
-  async createFile(userId, name, type, isPublic, parentId, localPath) {
-    const result = await this.filesCollection.insertOne({
+    if (!file) {
+      return null;
+    }
+
+    const {
       userId,
       name,
       type,
       isPublic,
       parentId,
       localPath,
-    });
+    } = file;
 
-    return result.insertedId;
+    return {
+      id,
+      userId: userId.toString(),
+      name,
+      type,
+      isPublic,
+      parentId: parentId.toString(),
+      localPath,
+    };
   }
 
-  findUserFilesByParentId(userId, parentId = 0, page = 0) {
-    const pageSize = 20;
+  async createFile(
+    userId,
+    name,
+    type,
+    localPath,
+    isPublic = false,
+    parentId = 0,
+  ) {
+    const result = await this.filesCollection.insertOne({
+      userId: new ObjectId(userId),
+      name,
+      type,
+      isPublic,
+      parentId: parentId !== 0 ? new ObjectId(parentId) : 0,
+      localPath,
+    });
+
+    return {
+      id: result.insertedId.toString(),
+      userId,
+      name,
+      type,
+      isPublic,
+      parentId,
+      localPath,
+    };
+  }
+
+  async findUserFilesByParentId(
+    userId,
+    parentId = 0,
+    page = 0,
+    pageSize = 20,
+  ) {
     const skip = page * pageSize;
 
-    return this.filesCollection.find({
-      userId,
-      parentId,
+    const files = await this.filesCollection.find({
+      userId: new ObjectId(userId),
+      parentId: parentId !== 0 ? new ObjectId(parentId) : 0,
     }).skip(skip).limit(pageSize).toArray();
+
+    return files.map(({
+      _id,
+      name,
+      type,
+      isPublic,
+      localPath,
+    }) => ({
+      id: _id.toString(),
+      userId,
+      name,
+      type,
+      isPublic,
+      parentId,
+      localPath,
+    }));
   }
 
-  findUserFileById(userId, fileId) {
-    return this.filesCollection.findOne({
+  async findUserFileById(userId, id) {
+    const file = await this.filesCollection.findOne({
+      _id: new ObjectId(id),
       userId: new ObjectId(userId),
-      _id: new ObjectId(fileId),
     });
+
+    if (!file) {
+      return null;
+    }
+
+    const {
+      name,
+      type,
+      isPublic,
+      parentId,
+      localPath,
+    } = file;
+
+    return {
+      id,
+      userId,
+      name,
+      type,
+      isPublic,
+      parentId: parentId.toString(),
+      localPath,
+    };
   }
 }
 

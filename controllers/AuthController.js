@@ -24,7 +24,7 @@ const getConnect = asyncHandler(async (req, res) => {
 
   const token = uuidv4();
 
-  await redisClient.set(`auth_${token}`, user._id.toString(), 24 * 60 * 60);
+  await redisClient.set(`auth_${token}`, user.id, 24 * 60 * 60);
 
   res.json({
     token,

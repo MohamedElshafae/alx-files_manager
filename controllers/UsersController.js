@@ -20,22 +20,17 @@ const postNew = asyncHandler(async (req, res) => {
     throw new HttpError(400, 'Already exist');
   }
 
-  const passwordHash = sha1(password);
+  const newUser = await dbClient.createUser(email, sha1(password));
 
-  const id = await dbClient.createUser(email, passwordHash);
-
-  res.status(201).json({
-    id,
-    email,
-  });
+  res.status(201).json(newUser);
 });
 
 const getMe = asyncHandler(async (req, res) => {
-  const { user } = req;
+  const { id, email } = req.user;
 
   res.json({
-    id: user._id,
-    email: user.email,
+    id,
+    email,
   });
 });
 
