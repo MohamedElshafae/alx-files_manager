@@ -39,5 +39,15 @@ router.get(
   authenticateUser,
   FilesController.getIndex,
 );
+router.put(
+  '/files/:id/publish',
+  authenticateUser,
+  FilesController.putPublish,
+);
+router.put(
+  '/files/:id/unpublish',
+  authenticateUser,
+  FilesController.putUnpublish,
+);
 
 export default router;

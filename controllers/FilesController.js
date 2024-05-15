@@ -111,4 +111,44 @@ const getIndex = asyncHandler(async (req, res) => {
   )));
 });
 
-export default { postUpload, getShow, getIndex };
+const putPublish = asyncHandler(async (req, res) => {
+  const { user } = req;
+  const { id } = req.params;
+
+  const file = await dbClient.findUserFileByIdAndUpdate(
+    user.id,
+    id,
+    { isPublic: true },
+  );
+
+  if (!file) {
+    throw new HttpError(404, 'Not found');
+  }
+
+  res.json({ ...file, localPath: undefined });
+});
+
+const putUnpublish = asyncHandler(async (req, res) => {
+  const { user } = req;
+  const { id } = req.params;
+
+  const file = await dbClient.findUserFileByIdAndUpdate(
+    user.id,
+    id,
+    { isPublic: false },
+  );
+
+  if (!file) {
+    throw new HttpError(404, 'Not found');
+  }
+
+  res.json({ ...file, localPath: undefined });
+});
+
+export default {
+  postUpload,
+  getShow,
+  getIndex,
+  putPublish,
+  putUnpublish,
+};

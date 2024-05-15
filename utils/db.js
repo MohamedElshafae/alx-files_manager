@@ -205,6 +205,23 @@ class DBClient {
       localPath,
     };
   }
+
+  async findUserFileByIdAndUpdate(userId, id, update) {
+    const result = await this.filesCollection.findOneAndUpdate(
+      {
+        _id: new ObjectId(id),
+        userId: new ObjectId(userId),
+      },
+      {
+        $set: update,
+      },
+      {
+        returnDocument: 'after',
+      },
+    );
+
+    return result.value;
+  }
 }
 
 const dbClient = new DBClient();
