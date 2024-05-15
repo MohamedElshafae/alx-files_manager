@@ -46,6 +46,7 @@ const postUpload = asyncHandler(async (req, res) => {
       user.id,
       name,
       type,
+      undefined,
       isPublic,
       parentId,
     );
@@ -68,9 +69,9 @@ const postUpload = asyncHandler(async (req, res) => {
     user.id,
     name,
     type,
+    localPath,
     isPublic,
     parentId,
-    localPath,
   );
 
   res.status(201).json({ ...file, localPath: undefined });
