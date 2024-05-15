@@ -86,6 +86,10 @@ const getShow = asyncHandler(async (req, res) => {
     id,
   );
 
+  if (!file) {
+    throw new HttpError(404, 'Not found');
+  }
+
   res.json({ ...file, localPath: undefined });
 });
 
