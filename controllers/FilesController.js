@@ -95,7 +95,10 @@ const getShow = asyncHandler(async (req, res) => {
 
 const getIndex = asyncHandler(async (req, res) => {
   const { user } = req;
-  const { parentId, page } = req.query;
+  const { page } = req.query;
+  let { parentId } = req.query;
+
+  parentId = parentId === '0' ? 0 : parentId;
 
   const files = await dbClient.findUserFilesByParentId(
     user.id,
