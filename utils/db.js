@@ -147,11 +147,18 @@ class DBClient {
     pageSize = 20,
   ) {
     const skip = page * pageSize;
+    const pipeline = [
+      {
+        $match: {
+          userId: new ObjectId(userId),
+          parentId: parentId !== 0 ? new ObjectId(parentId) : 0,
+        },
+      },
+      { $skip: skip },
+      { $limit: pageSize },
+    ];
 
-    const files = await this.filesCollection.find({
-      userId: new ObjectId(userId),
-      parentId: parentId !== 0 ? new ObjectId(parentId) : 0,
-    }).skip(skip).limit(pageSize).toArray();
+    const files = await this.filesCollection.aggregate(pipeline).toArray();
 
     return files.map(({
       _id,
