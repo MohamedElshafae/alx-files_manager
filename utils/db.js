@@ -219,7 +219,8 @@ class DBClient {
         returnDocument: 'after',
       },
     );
-
+    result.value['id']= result.value['_id'];
+    delete result.value['_id'];
     return result.value;
   }
 }
