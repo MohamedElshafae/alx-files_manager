@@ -86,7 +86,9 @@ class DBClient {
       return null;
     }
 
-    const { userId, name, type, isPublic, parentId, localPath } = file;
+    const {
+      userId, name, type, isPublic, parentId, localPath,
+    } = file;
 
     return {
       id,
@@ -105,7 +107,7 @@ class DBClient {
     type,
     localPath,
     isPublic = false,
-    parentId = 0
+    parentId = 0,
   ) {
     const result = await this.filesCollection.insertOne({
       userId: new ObjectId(userId),
@@ -142,7 +144,9 @@ class DBClient {
 
     const files = await this.filesCollection.aggregate(pipeline).toArray();
 
-    return files.map(({ _id, name, type, isPublic, localPath }) => ({
+    return files.map(({
+      _id, name, type, isPublic, localPath,
+    }) => ({
       id: _id.toString(),
       userId,
       name,
@@ -163,7 +167,9 @@ class DBClient {
       return null;
     }
 
-    const { name, type, isPublic, parentId, localPath } = file;
+    const {
+      name, type, isPublic, parentId, localPath,
+    } = file;
 
     return {
       id,
@@ -187,7 +193,7 @@ class DBClient {
       },
       {
         returnDocument: 'after',
-      }
+      },
     );
 
     return result.value;
