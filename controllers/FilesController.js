@@ -132,7 +132,7 @@ const putUnpublish = asyncHandler(async (req, res) => {
   const { user } = req;
   const { id } = req.params;
 
-  const file = await dbClient.findUserFileByIdAndUpdate(
+  let file = await dbClient.findUserFileByIdAndUpdate(
     user.id,
     id,
     { isPublic: false },
@@ -142,6 +142,9 @@ const putUnpublish = asyncHandler(async (req, res) => {
     throw new HttpError(404, 'Not found');
   }
 
+  
+  file['id'] = file._id;
+  delete file['_id'];
   res.json({ ...file, localPath: undefined });
 });
 
