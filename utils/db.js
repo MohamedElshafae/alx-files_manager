@@ -6,34 +6,28 @@ const DATABASE = process.env.DB_DATABASE || 'files_manager';
 
 class DBClient {
   constructor() {
-    this.client = new MongoClient(
-      `mongodb://${HOST}:${PORT}`,
-    );
+    this.client = new MongoClient(`mongodb://${HOST}:${PORT}`);
 
     this.client.connect();
   }
 
   get usersCollection() {
-    return this.client.db(
-      DATABASE,
-    ).collection('users');
+    return this.client.db(DATABASE).collection('users');
   }
 
   get filesCollection() {
-    return this.client.db(
-      DATABASE,
-    ).collection('files');
+    return this.client.db(DATABASE).collection('files');
   }
 
   isAlive() {
     return this.client.isConnected();
   }
 
-  nbUsers() {
+  async nbUsers() {
     return this.usersCollection.countDocuments();
   }
 
-  nbFiles() {
+  async nbFiles() {
     return this.filesCollection.countDocuments();
   }
 
@@ -92,14 +86,7 @@ class DBClient {
       return null;
     }
 
-    const {
-      userId,
-      name,
-      type,
-      isPublic,
-      parentId,
-      localPath,
-    } = file;
+    const { userId, name, type, isPublic, parentId, localPath } = file;
 
     return {
       id,
@@ -118,7 +105,7 @@ class DBClient {
     type,
     localPath,
     isPublic = false,
-    parentId = 0,
+    parentId = 0
   ) {
     const result = await this.filesCollection.insertOne({
       userId: new ObjectId(userId),
@@ -140,12 +127,7 @@ class DBClient {
     };
   }
 
-  async findUserFilesByParentId(
-    userId,
-    parentId = 0,
-    page = 0,
-    pageSize = 20,
-  ) {
+  async findUserFilesByParentId(userId, parentId = 0, page = 0, pageSize = 20) {
     const skip = page * pageSize;
     const pipeline = [
       {
@@ -160,13 +142,7 @@ class DBClient {
 
     const files = await this.filesCollection.aggregate(pipeline).toArray();
 
-    return files.map(({
-      _id,
-      name,
-      type,
-      isPublic,
-      localPath,
-    }) => ({
+    return files.map(({ _id, name, type, isPublic, localPath }) => ({
       id: _id.toString(),
       userId,
       name,
@@ -187,13 +163,7 @@ class DBClient {
       return null;
     }
 
-    const {
-      name,
-      type,
-      isPublic,
-      parentId,
-      localPath,
-    } = file;
+    const { name, type, isPublic, parentId, localPath } = file;
 
     return {
       id,
@@ -217,7 +187,7 @@ class DBClient {
       },
       {
         returnDocument: 'after',
-      },
+      }
     );
 
     return result.value;
