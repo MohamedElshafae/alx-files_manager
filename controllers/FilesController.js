@@ -159,8 +159,7 @@ const getFile = asyncHandler(async (req, res) => {
   if (file.type === 'folder') {
     throw new HttpError(400, 'A folder doesnt have content');
   }
-  if (!fs.existsSync(localPath))
-    throw new HttpError(404, 'Not found');
+  if (!fs.existsSync(file.localPath)) throw new HttpError(404, 'Not found');
 
   const mimeType = mime.contentType(file.name);
   res.set('Content-Type', mimeType);
