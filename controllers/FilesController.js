@@ -160,10 +160,9 @@ const getFile = asyncHandler(async (req, res) => {
     throw new HttpError(400, 'A folder doesnt have content');
   }
 
-  const content = fs.readFileSync(file.localPath, 'utf8');
-  const mimeType = mime.contentType(file.name) || 'application/octet-stream';
+  const mimeType = mime.contentType(file.name);
   res.set('Content-Type', mimeType);
-  res.send(content);
+  res.sendFile(file.localPath);
 });
 
 export default {
