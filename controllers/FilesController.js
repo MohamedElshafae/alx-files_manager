@@ -1,8 +1,10 @@
 import fs from 'fs';
 import { v4 as uuidv4 } from 'uuid';
+import mime from 'mime-types';
 import dbClient from '../utils/db';
 import HttpError from '../utils/HttpError';
 import asyncHandler from '../utils/asyncHandler';
+import AuthController from './AuthController';
 
 const FOLDER_PATH = process.env.FOLDER_PATH || '/tmp/files_manager';
 
@@ -145,10 +147,30 @@ const putUnpublish = asyncHandler(async (req, res) => {
   res.json({ ...file, localPath: undefined });
 });
 
+const getFile = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const file = await dbClient.findFileById(id);
+  const isAuthed = await AuthController.isAuthenticated(req);
+
+  if (!file || (!isAuthed && !file.isPublic)) {
+    throw new HttpError(404, 'Not found');
+  }
+
+  if (file.type === 'folder') {
+    throw new HttpError(400, 'A folder doesnt have content');
+  }
+
+  const content = fs.readFileSync(file.localPath, 'utf8');
+  const mimeType = mime.contentType(file.name) || 'application/octet-stream';
+  res.set('Content-Type', mimeType);
+  res.send(content);
+});
+
 export default {
   postUpload,
   getShow,
   getIndex,
   putPublish,
   putUnpublish,
+  getFile,
 };

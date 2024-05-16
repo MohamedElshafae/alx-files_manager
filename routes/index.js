@@ -50,4 +50,9 @@ router.put(
   FilesController.putUnpublish,
 );
 
+router.get(
+  '/files/:id/data',
+  FilesController.getFile,
+);
+
 export default router;

@@ -39,4 +39,15 @@ const getDisconnect = asyncHandler(async (req, res) => {
   res.sendStatus(204);
 });
 
-export default { getConnect, getDisconnect };
+const isAuthenticated = async (request) => {
+  const token = request.headers['x-token'];
+
+  if (!token) {
+    return false;
+  }
+  const userId = await redisClient.get(`auth_${token}`);
+  const user = await dbClient.findUserById(userId);
+  return !!user;
+};
+
+export default { getConnect, getDisconnect, isAuthenticated };

@@ -27,13 +27,11 @@ module.exports = {
       'LabeledStatement',
       'WithStatement',
     ],
-    "jest/require-hook": "off",
   },
-  overrides: [
+  overrides:[
     {
       files: ['*.js'],
       excludedFiles: 'babel.config.js',
     }
   ]
 };
-
